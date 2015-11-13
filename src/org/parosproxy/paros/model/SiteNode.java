@@ -50,8 +50,10 @@ package org.parosproxy.paros.model;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -72,7 +74,7 @@ public class SiteNode extends DefaultMutableTreeNode {
     private Vector<HistoryReference> pastHistoryList = new Vector<>(10);
 	// ZAP: Support for linking Alerts to SiteNodes
     private SiteMap siteMap = null;
-	private ArrayList<Alert> alerts = new ArrayList<>();
+    private ConcurrentSkipListSet<Alert> alerts = new ConcurrentSkipListSet<>();
 	private boolean justSpidered = false;
 	//private boolean justAJAXSpidered = false;
 	private ArrayList<String> icons = null;
@@ -317,28 +319,29 @@ public class SiteNode extends DefaultMutableTreeNode {
     }
     
     public boolean hasAlert(Alert alert) {
-		for (Alert a : this.getAlerts()) {
-			   if (a.equals(alert)) {
-				   // We've already recorded it
-				   return true;
-			   }
-		}
-    	return false;
+    	return alerts.contains(alert);
     }
     
     public void addAlert(Alert alert) {
+    	addAlert(alert, true);
+    }
+    
+    public void addAlert(Alert alert, boolean notifyChange) {
     	if (this.hasAlert(alert)) {
     		return;
     	}
     	this.alerts.add(alert);
     	if (this.getParent() != null) {
- 			this.getParent().addAlert(alert);
+ 			this.getParent().addAlert(alert, false);
     	}
     	if (this.siteMap != null) {
     		// Adding alert might affect the nodes visibility in a filtered tree
     		siteMap.applyFilter(this);
     	}
-		this.nodeChanged();
+
+    	if(notifyChange) {
+    		this.nodeChanged();
+    	}
     }
     
     public void updateAlert(Alert alert) {
@@ -364,10 +367,9 @@ public class SiteNode extends DefaultMutableTreeNode {
 		}
     }
     
-    @SuppressWarnings("unchecked")
-	public List<Alert> getAlerts() {
+	public Collection<Alert> getAlerts() {
     	// This is a shallow copy, but prevents a ConcurrentModificationException
- 	   return (List<Alert>) this.alerts.clone();
+ 	   return this.alerts.clone();
     }
     
     private void clearChildAlert (Alert alert, SiteNode child) {

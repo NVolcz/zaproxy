@@ -351,4 +351,25 @@ public class SqlTableAlert extends SqlAbstractTable implements TableAlert {
 		}
     }
 	
+	@Override
+	public List<RecordAlert> getAlerts() throws DatabaseException {
+		SqlPreparedStatementWrapper psGetAllAlerts = null;
+		try {
+			psGetAllAlerts = DbSQL.getSingleton().getPreparedStatement("alert.ps.getallalerts");
+			ArrayList<RecordAlert> result = new ArrayList<>();
+			try (ResultSet rs = psGetAllAlerts.getPs().executeQuery()) {
+				RecordAlert ra = build(rs);
+				while (ra != null) {
+					result.add(ra);
+					ra = build(rs);
+				}
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DatabaseException(e);
+		} finally {
+			DbSQL.getSingleton().releasePreparedStatement(psGetAllAlerts);
+		}
+	}
+	
 }

@@ -393,14 +393,9 @@ public class HistoryReference {
 		   alerts = new ArrayList<>(1);
 	   }
 	   
-	   boolean add = true;
+	   // We've already recorded it?
+	   boolean add = !alerts.contains(alert);
 	   
-	   for (Alert a : alerts) {
-		   if (alert.equals(a)) {
-			   // We've already recorded it
-				add = false;
-		   }
-	   }
 	   if (add) {
 		   this.alerts.add(alert);
 		   alert.setHistoryRef(this);
@@ -408,8 +403,8 @@ public class HistoryReference {
 	   // Try to add to the SiteHNode anyway - that will also check if its already added
 	   if (this.siteNode != null) {
 		   siteNode.addAlert(alert);
-	   } else {
 	   }
+	   
 	   return add;
    }
    

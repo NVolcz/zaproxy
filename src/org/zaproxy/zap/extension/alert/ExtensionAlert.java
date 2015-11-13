@@ -23,6 +23,7 @@ import java.awt.EventQueue;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -380,17 +381,13 @@ public class ExtensionAlert extends ExtensionAdaptor implements SessionChangedLi
         SiteMap siteTree = this.getModel().getSession().getSiteTree();
 
         TableAlert tableAlert = getModel().getDb().getTableAlert();
-    	// TODO this doesnt work, but should be used when its fixed :/
-        //Vector<Integer> v = tableAlert.getAlertListBySession(Model.getSingleton().getSession().getSessionId());
-        Vector<Integer> v = tableAlert.getAlertList();
+        List<RecordAlert> alerts = tableAlert.getAlerts();
 
         final ExtensionHistory extensionHistory = (ExtensionHistory) Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionHistory.NAME);
 
-        for (int i = 0; i < v.size(); i++) {
-            int alertId = v.get(i).intValue();
-            RecordAlert recAlert = tableAlert.read(alertId);
+        for (RecordAlert recAlert : alerts) {
             int historyId = recAlert.getHistoryId();
             HistoryReference historyReference = null;
             if (extensionHistory != null) {
@@ -662,7 +659,7 @@ public class ExtensionAlert extends ExtensionAdaptor implements SessionChangedLi
     public String getXml(SiteNode site) {
         StringBuilder xml = new StringBuilder();
         xml.append("<alerts>");
-        List<Alert> alerts = site.getAlerts();
+        List<Alert> alerts = new ArrayList<>(site.getAlerts());
         SortedSet<String> handledAlerts = new TreeSet<String>(); 
         
         for (int i=0; i < alerts.size(); i++) {

@@ -21,6 +21,7 @@ package org.zaproxy.zap.model;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -559,7 +560,7 @@ public class Context {
 	}
 
 	private void moveNode (SiteMap sitesTree, SiteNode sn) {
-		List<Alert> alerts = sn.getAlerts();
+		Collection<Alert> alerts = sn.getAlerts();
 		
 		// And delete the old one
 		deleteNode(sitesTree, sn);
@@ -576,7 +577,7 @@ public class Context {
 	
 	private void deleteNode (SiteMap sitesTree, SiteNode sn) {
 		log.debug("Deleting node " + sn.getHierarchicNodeName());
-		List<Alert> alerts = sn.getAlerts();
+		Collection<Alert> alerts = sn.getAlerts();
 		HistoryReference href = sn.getHistoryReference();
 		
 		// Remove old one

@@ -58,4 +58,6 @@ public interface TableAlert extends DatabaseListener {
 			throws DatabaseException;
 
 	Vector<Integer> getAlertList() throws DatabaseException;
+
+	List<RecordAlert> getAlerts() throws DatabaseException;
 }

@@ -415,4 +415,23 @@ public class ParosTableAlert extends ParosAbstractTable implements TableAlert {
 			throw new DatabaseException(e);
 		}
     }
+    
+	@Override
+	public List<RecordAlert> getAlerts() throws DatabaseException {
+		try (PreparedStatement psReadScan = getConnection()
+				.prepareStatement("SELECT * FROM " + TABLE_NAME)) {
+			ArrayList<RecordAlert> result = new ArrayList<>();
+
+			try (ResultSet rs = psReadScan.executeQuery()) {
+				RecordAlert ra = build(rs);
+				while (ra != null) {
+					result.add(ra);
+					ra = build(rs);
+				}
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DatabaseException(e);
+		}
+	}
 }

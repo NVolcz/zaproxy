@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.alert;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class PopupMenuShowAlerts extends PopupMenuHistoryReferenceContainer {
 
 	@Override
     public boolean isButtonEnabledForHistoryReference (HistoryReference href) {
-		List<Alert> alerts = href.getAlerts();
+		Collection<Alert> alerts = href.getAlerts();
 		if (href.getSiteNode() != null) {
 			alerts = href.getSiteNode().getAlerts();
 		}
